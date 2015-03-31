@@ -10,9 +10,10 @@
   <link rel="stylesheet" type="text/css" href="//cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
   <link rel="stylesheet" type="text/css" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css">
-  <link rel="stylesheet" type="text/css" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">
+  <!--<link rel="stylesheet" type="text/css" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">-->
   <link rel="stylesheet" type="text/css" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.css" />
   <link rel="stylesheet" type="text/css" href="//cdn-geoweb.s3.amazonaws.com/esri-leaflet-geocoder/1.0.0-rc.4/esri-leaflet-geocoder.css">
+  <link rel="stylesheet" type="text/css" href="vendor/leaflet.awesome-markers/leaflet.awesome-markers.css">
   <style type="text/css">
     html,
     body,
@@ -30,10 +31,11 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
+/*
     body {
       padding-top: 50px;
     }
-
+*/
     .progress-bar-full {
       width: 100%;
     }
@@ -46,6 +48,96 @@
       left: 50%;
       margin: -10px 0 0 -110px;
       z-index: 20001;
+    }
+
+
+    .marker-cluster-small {
+      background-color: rgba(140,177,210,0.4);
+      margin-left: -20px;
+      margin-top: -20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+  }
+    .marker-cluster-small div {
+      background-color: rgba(140,177,210,0.85);
+      width: 24px;
+      height: 24px;
+      margin-left: 8px;
+      margin-top: 8px;
+      border-radius: 24px;
+    }
+
+    .marker-cluster-small:hover {
+      background-color: rgba(140,177,210,0.7);
+    }
+    .marker-cluster-small:hover > div {
+      background-color: rgba(140,177,210,0);
+    }
+
+    .marker-cluster-medium {
+      background-color: rgba(97,147,179,0.4);
+      margin-left: -30px;
+      margin-top: -30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+    }
+    .marker-cluster-medium div {
+      background-color: rgba(97,147,179,0.85);
+      width: 44px;
+      height: 44px;
+      margin-left: 8px;
+      margin-top: 8px;
+      border-radius: 22px;
+    }
+    .marker-cluster-medium:hover {
+      background-color: rgba(97,147,179,0.7);
+    }
+    .marker-cluster-medium:hover > div {
+      background-color: rgba(97,147,179,0);
+    }
+
+    .marker-cluster-large {
+      background-color: rgba(59,110,128,0.4);
+      margin-left: -40px;
+      margin-top: -40px;
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+    }
+    .marker-cluster-large div {
+      background-color: rgba(59,110,128,0.85);
+      width: 60px;
+      height: 60px;
+      margin-left: 10px;
+      margin-top: 10px;
+      border-radius: 30px;
+    }
+    .marker-cluster-large:hover {
+      background-color: rgba(59,110,128,0.7);
+    }
+    .marker-cluster-large:hover > div {
+      background-color: rgba(59,110,128,0);
+    }
+
+    .marker-cluster {
+        background-clip: padding-box;
+        border-radius: 20px;
+    }
+    .marker-cluster div {
+        width: 30px;
+        height: 30px;
+        margin-left: 5px;
+        margin-top: 5px;
+        border-radius: 15px;
+
+        text-align: center;
+        color: #fff;
+        font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    }
+    .marker-cluster span {
+        line-height: 30px;
     }
   </style>
 </head>
@@ -75,6 +167,7 @@
   <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.js"></script>
   <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+  <script src="vendor/leaflet.awesome-markers/leaflet.awesome-markers.min.js"></script>
   <script src="vendor/list.fuzzysearch/list.fuzzysearch.min.js"></script>
   <script>
     var map, featureList, stationSearch = [];
@@ -92,17 +185,16 @@
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      disableClusteringAtZoom: 16
+      disableClusteringAtZoom: 15
     });
 
     var stations = L.geoJson(null, {
       pointToLayer: function(feature, latlng) {
         return L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: "img/evse.png",
-            iconSize: [24, 28],
-            iconAnchor: [12, 28],
-            popupAnchor: [0, -25]
+          icon: L.AwesomeMarkers.icon({
+            icon: 'plug',
+            prefix: 'fa',
+            markerColor: 'green'
           }),
           title: feature.properties.nom_station,
           riseOnHover: true
@@ -154,12 +246,12 @@
     // add geocoder
     var searchControl = new L.esri.Geocoding.Controls.Geosearch().addTo(map);
     searchControl.on('results', function(data) {
-        var result = data.results[0];
-        map.panTo(result.latlng);
-        L.popup()
-            .setLatLng(result.latlng)
-            .setContent(result.text)
-            .openOn(map);
+      var result = data.results[0];
+      map.panTo(result.latlng);
+      L.popup()
+        .setLatLng(result.latlng)
+        .setContent(result.text)
+        .openOn(map);
     });
     /////////////////
 
