@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.ie.css" />
+  <![endif]-->
+  <link rel="stylesheet" rel="stylesheet" type="text/css" href="//cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css">
+  <link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">
+  <link rel="stylesheet" type="text/css" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.css" />
+  <style type="text/css">
+    html,
+    body,
+    #container {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    html,
+    body,
+    #leaflet-map {
+      width: auto;
+      height: 100%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      padding-top: 50px;
+    }
+
+    .progress-bar-full {
+      width: 100%;
+    }
+
+    #loading {
+      position: absolute;
+      width: 220px;
+      height: 19px;
+      top: 50%;
+      left: 50%;
+      margin: -10px 0 0 -110px;
+      z-index: 20001;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="leaflet-map"></div>
+  </div>
+  <div id="loading">
+    <div class="loading-indicator">
+      <div class="progress progress-striped active">
+        <div class="progress-bar progress-bar-info progress-bar-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="//cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="//cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.6/esri-leaflet.js"></script>
+  <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.js"></script>
+  <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+  <script src="vendor/list.fuzzysearch/list.fuzzysearch.min.js"></script>
+  <script>
+    var map, markerClusters, featureList, stationSearch = [];
+
+    markerClusters = new L.MarkerClusterGroup({
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      disableClusteringAtZoom: 16
+    });
+
+    map = L.map('leaflet-map', {
+      center: [46.6, 2.3],
+      zoom: 6
+    });
+    L.esri.basemapLayer('Topographic', {
+      detectRetina: true
+    }).addTo(map);
+
+    L.control.locate().addTo(map);
+
+    var stationsLayer = L.geoJson(null);
+    var stations = L.geoJson(null, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: "img/evse.png",
+            iconSize: [24, 28],
+            iconAnchor: [12, 28],
+            popupAnchor: [0, -25]
+          }),
+          title: feature.properties.nom_station,
+          riseOnHover: true
+        });
+      },
+      onEachFeature: function (feature, layer) {
+        if (feature.properties) {
+          var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.nom_station + "</td></tr>" + "<tr><th>Holder</th><td>" + feature.properties.nom_porteur + "</td></tr>" + "<tr><th>Address</th><td>" + feature.properties.adresse_station + "</td></tr>" + "<table>";
+          layer.on({
+            click: function (e) {
+              $("#feature-title").html(feature.properties.nom_station);
+              $("#feature-info").html(content);
+              $("#featureModal").modal("show");
+              highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
+            }
+          });
+          $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/theater.png"></td><td class="feature-name">' + layer.feature.properties.nom_station + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+          stationSearch.push({
+            name: layer.feature.properties.nom_station,
+            address: layer.feature.properties.adresse_station,
+            source: "Stations",
+            id: L.stamp(layer),
+            lat: layer.feature.geometry.coordinates[1],
+            lng: layer.feature.geometry.coordinates[0]
+          });
+        }
+      }
+    });
+    $.getJSON("data/evse.geojson", function(data) {
+      stations.addData(data);
+      map.addLayer(stationsLayer);
+    });
+
+
+    $(document).one("ajaxStop", function() {
+      $("#loading").hide();
+    });
+  </script>
+</body>
+
+</html>
