@@ -74,7 +74,6 @@ function syncSidebar() {
     if (map.getBounds().contains(layer.getLatLng())) {
       $("#feature-list tbody").append(getFeatureListContent(layer));
     }
-
   });
   /* Update list.js featureList */
   featureList = new List("features", {
@@ -87,12 +86,11 @@ function syncSidebar() {
 
 function getFeatureListContent(layer) {
   var name = layer.feature.properties.nom_porteur;
-  if(layer.feature.properties.nom_station !== '' ) {
-    name = name + ' ' +layer.feature.properties.nom_station;
+  if (layer.feature.properties.nom_station !== '') {
+    name = name + ' ' + layer.feature.properties.nom_station;
   }
   return '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng +
-    '"><td style="vertical-align: middle;"><i class="fa fa-chevron-left pull-left"></i></td><td style="vertical-align: middle;"><img width="24" height="24" src="img/electric_power.png"></td><td class="feature-name">' + name +
-    '</td></tr>';
+    '"><td style="vertical-align: middle;"><i class="fa fa-chevron-left pull-left"></i></td><td style="vertical-align: middle;"><img width="24" height="24" src="img/electric_power.png"></td><td class="feature-name">' + name + '</td></tr>';
 }
 
 /***************/
@@ -142,18 +140,18 @@ $("#sidebar-hide-btn").click(function() {
 });
 
 /* Highlight search box text on click */
-$("#searchbox").click(function () {
+$("#searchbox").click(function() {
   $(this).select();
 });
 
 /* Prevent hitting enter from refreshing the page */
-$("#searchbox").keypress(function (e) {
+$("#searchbox").keypress(function(e) {
   if (e.which === 13) {
     e.preventDefault();
   }
 });
 
-$("#featureModal").on("hidden.bs.modal", function (e) {
+$("#featureModal").on("hidden.bs.modal", function(e) {
   $(document).on("mouseout", ".feature-row", clearHighlight);
 });
 
@@ -195,9 +193,8 @@ var stations = L.geoJson(null, {
     if (feature.properties) {
       // var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.nom_station + "</td></tr>" + "<tr><th>Holder</th><td>" + feature.properties.nom_porteur + "</td></tr>" +
       //   "<tr><th>Address</th><td>" + feature.properties.adresse_station + "</td></tr>" + "<table>";
-      var content = "<table class=\"marker-properties\"><tbody>";
+      var content = "<table class=\"marker-properties\"><tbody>"; // defini ici opur etre utilise dans layer.on(click)
       var out = [];
-      //var regexp = new RegExp('^http');
       var value;
       if (feature.properties) {
         for (var key in feature.properties) {
@@ -216,7 +213,7 @@ var stations = L.geoJson(null, {
       });
       $("#feature-list tbody").append(getFeatureListContent(layer));
       stationSearch.push({
-        name: layer.feature.properties.nom_station,
+        name: layer.feature.properties.nom_porteur  + ' ' + layer.feature.properties.nom_station,
         address: layer.feature.properties.adresse_station,
         source: "Stations",
         id: L.stamp(layer),
@@ -262,7 +259,7 @@ searchControl.on('results', function(data) {
 /////////////////
 
 /* Filter sidebar feature list to only show features in current map bounds */
-map.on("moveend", function (e) {
+map.on("moveend", function(e) {
   syncSidebar();
 });
 
@@ -274,12 +271,16 @@ $(document).one("ajaxStop", function() {
   sizeLayerControl();
   //map.fitBounds(stations.getBounds());
 
-  featureList = new List("features", {valueNames: ["feature-name"]});
-  featureList.sort("feature-name", {order:"asc"});
+  featureList = new List("features", {
+    valueNames: ["feature-name"]
+  });
+  featureList.sort("feature-name", {
+    order: "asc"
+  });
 
   var stationsBH = new Bloodhound({
     name: "Stations",
-    datumTokenizer: function (d) {
+    datumTokenizer: function(d) {
       return Bloodhound.tokenizers.whitespace(d.name);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -323,13 +324,3 @@ $(document).one("ajaxStop", function() {
   $(".twitter-typeahead").css("display", "block");
 
 });
-
-// Leaflet patch to make layer control scrollable on touch browsers
-// var container = $(".leaflet-control-layers")[0];
-// if (!L.Browser.touch) {
-//   L.DomEvent
-//     .disableClickPropagation(container)
-//     .disableScrollPropagation(container);
-// } else {
-//   L.DomEvent.disableClickPropagation(container);
-// }
