@@ -1,26 +1,35 @@
-html,
-body,
-#container {
+html, body, #container {
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
-
-html,
-body,
-#leaflet-map {
+html, body, #leaflet-map {
   width: auto;
   height: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-/*body {
+body {
   padding-top: 50px;
-}*/
+}
+
+.leaflet-bar a {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    /* border-bottom-color: rgb(204, 204, 204); */
+    color: #444;
+    display: block;
+    height: 26px;
+    width: 26px;
+    line-height: 1.45 !important;
+    text-align: center;
+    text-decoration: none;
+    font: bold 18px'Lucida Console', Monaco, monospace;
+}
+/* Progress Bar */
 
 .progress-bar-full {
   width: 100%;
 }
-
 #loading {
   position: absolute;
   width: 220px;
@@ -30,6 +39,7 @@ body,
   margin: -10px 0 0 -110px;
   z-index: 20001;
 }
+/* Feature Info */
 
 #feature-info-wrapper {
   position: absolute;
@@ -41,60 +51,183 @@ body,
   width: 220px;
   height: 150px
 }
+/* NavBar */
+
+.navbar .navbar-brand {
+  font-weight: bold;
+  font-size: 25px;
+  color: #FFFFFF;
+}
+.navbar-collapse.in {
+  overflow-y: hidden;
+}
+.navbar-header .navbar-icon-container {
+  margin-right: 15px;
+}
+.navbar-header .navbar-icon {
+  line-height: 50px;
+  height: 50px;
+}
+.navbar-header a.navbar-icon {
+  margin-left: 25px;
+}
+/* Sidebar */
+
+#sidebar {
+  width: 250px;
+  height: 100%;
+  max-width: 100%;
+  float: right;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
+}
+#sidebar-hide-btn {
+  margin-top: -2px;
+}
+.sidebar-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.sidebar-table {
+  position: absolute;
+  width: 100%;
+  top: 103px;
+  bottom: 0px;
+  overflow: auto;
+}
+
+/* Typehead */
+
+.typeahead {
+  background-color: #FFFFFF;
+}
+.tt-dropdown-menu {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 4px;
+  padding: 4px 0;
+  width: 100%;
+  max-height: 300px;
+  overflow: auto;
+}
+.tt-suggestion {
+  font-size: 14px;
+  line-height: 20px;
+  padding: 3px 10px;
+}
+.tt-suggestion.tt-cursor {
+  background-color: #0097CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+.tt-suggestion p {
+  margin: 0;
+}
+.tt-suggestion + .tt-suggestion {
+  border-top: 1px solid #ccc;
+}
+.typeahead-header {
+  margin: 0 5px 5px 5px;
+  padding: 3px 0;
+  border-bottom: 2px solid #333;
+}
+
+/* search */
+
+.has-feedback .form-control-feedback {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+}
+
+/* Misc */
+
+input[type="radio"], input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Media */
+
+@media (max-width: 992px) {
+  .navbar .navbar-brand {
+    font-size: 18px;
+  }
+}
+@media (max-width: 767px) {
+  #sidebar {
+    display: none;
+  }
+  .url-break {
+    word-break: break-all;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+  .dropdown-menu a i {
+    color: #FFFFFF;
+  }
+}
+/* Print Handling */
+
+@media print {
+  .navbar {
+    display: none !important;
+  }
+  .leaflet-control-container {
+    display: none !important;
+  }
+}
+/* Marker cluster */
 
 .marker-cluster-small {
   background-color: rgba(140, 177, 210, 0.4);
 }
-
 .marker-cluster-small div {
   background-color: rgba(140, 177, 210, 0.85);
 }
-
 .marker-cluster-small:hover {
   background-color: rgba(140, 177, 210, 0.7);
 }
-
 .marker-cluster-small:hover > div {
   background-color: rgba(140, 177, 210, 0);
 }
-
 .marker-cluster-medium {
   background-color: rgba(97, 147, 179, 0.4);
 }
-
 .marker-cluster-medium div {
   background-color: rgba(97, 147, 179, 0.85);
 }
-
 .marker-cluster-medium:hover {
   background-color: rgba(97, 147, 179, 0.7);
 }
-
 .marker-cluster-medium:hover > div {
   background-color: rgba(97, 147, 179, 0);
 }
-
 .marker-cluster-large {
   background-color: rgba(59, 110, 128, 0.4);
 }
-
 .marker-cluster-large div {
   background-color: rgba(59, 110, 128, 0.85);
 }
-
 .marker-cluster-large:hover {
   background-color: rgba(59, 110, 128, 0.7);
 }
-
 .marker-cluster-large:hover > div {
   background-color: rgba(59, 110, 128, 0);
 }
-
 .marker-cluster {
   background-clip: padding-box;
   border-radius: 20px;
 }
-
 .marker-cluster div {
   width: 30px;
   height: 30px;
@@ -106,7 +239,6 @@ body,
   font-size: 14px;
   font-weight: 700;
 }
-
 .marker-cluster span {
   line-height: 30px;
 }
