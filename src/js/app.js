@@ -1,5 +1,7 @@
 var map, featureList, stationsGeoJson, stationSearch = [];
 
+$("#feature-info-wrapper").hide();
+
 /*************/
 /* functions */
 /*************/
@@ -9,10 +11,7 @@ function onMapClick(evt) {
     var lat = latlon.lat;
     var lon = latlon.lng;
 
-    var pt = turf.point([lon, lat]);
-    var unit = 'kilometers';
     var radius = 25;
-    var buffered = turf.buffer(pt, radius, unit);
 
     var circle = L.circle([lat, lon], radius * 1000, {
       stroke: true,
@@ -23,21 +22,38 @@ function onMapClick(evt) {
       fillOpacity: 0.5
     });
     bufferedLayer.clearLayers().addLayer(circle);
-    var fc = turf.featurecollection(stations);
+    highlight.clearLayers();
+    map.fitBounds(circle.getBounds());
+    // within a rectangle :
+    //var ptsWithin = [];
+    // stations.eachLayer(function(layer) {
+    //   if (circle.getBounds().contains(layer.getLatLng())) {
+    //     ptsWithin.push(layer);
+    //     highlight.addLayer(L.circleMarker([layer.feature.geometry.coordinates[1], layer.feature.geometry.coordinates[0]], highlightStyle));
+    //   }
+    // });
+
+    //var fc = turf.featurecollection(stations);
+    //var buffered = turf.featurecollection(circle.toGeoJSON());
+    var pt = turf.point([lon, lat]);
+    var unit = 'kilometers';
+    var buffered = turf.buffer(pt, radius, unit);
     var ptsWithin = turf.within(stationsGeoJson, buffered);
 
+    var nbr = 0;
+    if( ptsWithin.features ) {
+      nbr = ptsWithin.features.length;
+    }
     var content = 'Within a ' + radius + ' km radius from ' +
       '(' + lat.toFixed(5) + ',' + lon.toFixed(5) + ')<br />' +
-      'There is ' + ptsWithin.features.length + ' stations<br/><br/>' +
+      'There is ' + nbr + ' stations<br/><br/>' +
       '<button id="clear-btn" type="button" class="btn btn-default">Clear</button>';
+      for (var i = 0;  i < nbr; i++) {
+        highlight.addLayer(L.circleMarker([ptsWithin.features[i].geometry.coordinates[1], ptsWithin.features[i].geometry.coordinates[0]], highlightStyle));
+      }
 
-    //$("#feature-info").html(content);
-    //$("#feature-info-wrapper").show();
-
-    highlight.clearLayers();
-    for (var i = 0; i < ptsWithin.features.length; i++) {
-      highlight.addLayer(L.circleMarker([ptsWithin.features[i].geometry.coordinates[1], ptsWithin.features[i].geometry.coordinates[0]], highlightStyle));
-    }
+    $("#feature-info").html(content);
+    $("#feature-info-wrapper").show();
 
     $("#clear-btn").click(function() {
       $("#feature-info-wrapper").hide();
@@ -53,6 +69,8 @@ function sizeLayerControl() {
 function clearHighlight() {
   highlight.clearLayers();
   bufferedLayer.clearLayers();
+  $("#feature-info-wrapper").hide();
+
 }
 
 function sidebarClick(id) {
@@ -87,7 +105,7 @@ function syncSidebar() {
 function getFeatureListContent(layer) {
   var name = layer.feature.properties.nom_porteur;
   if (layer.feature.properties.nom_station !== '') {
-    name = name + ' ' + layer.feature.properties.nom_station;
+    name = name + ' ' + layer.feature.properties.nom_station + '_';
   }
   return '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng +
     '"><td style="vertical-align: middle;"><i class="fa fa-chevron-left pull-left"></i></td><td style="vertical-align: middle;"><img width="24" height="24" src="img/electric_power.png"></td><td class="feature-name">' + name + '</td></tr>';
