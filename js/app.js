@@ -105,7 +105,7 @@ function syncSidebar() {
 function getFeatureListContent(layer) {
   var name = layer.feature.properties.nom_porteur;
   if (layer.feature.properties.nom_station !== '') {
-    name = name + ' ' + layer.feature.properties.nom_station + '_';
+    name = name + ' ' + layer.feature.properties.nom_station;
   }
   return '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng +
     '"><td style="vertical-align: middle;"><i class="fa fa-chevron-left pull-left"></i></td><td style="vertical-align: middle;"><img width="24" height="24" src="img/electric_power.png"></td><td class="feature-name">' + name + '</td></tr>';
