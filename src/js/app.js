@@ -24,7 +24,7 @@ function onMapClick(evt) {
     bufferedLayer.clearLayers().addLayer(circle);
     highlight.clearLayers();
     map.fitBounds(circle.getBounds());
-    // within a rectangle :
+    // within a square :
     //var ptsWithin = [];
     // stations.eachLayer(function(layer) {
     //   if (circle.getBounds().contains(layer.getLatLng())) {
@@ -95,7 +95,8 @@ function syncSidebar() {
   });
   /* Update list.js featureList */
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"
@@ -104,9 +105,9 @@ function syncSidebar() {
 
 function getFeatureListContent(layer) {
   var name = layer.feature.properties.nom_porteur;
-  // if (layer.feature.properties.nom_station !== '') {
-  //   name = name + ' ' + layer.feature.properties.nom_station;
-  // }
+  if (layer.feature.properties.nom_station !== '') {
+    name = name + ' ' + layer.feature.properties.nom_station;
+  }
   return '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng +
     '"><td style="vertical-align: middle;"><i class="fa fa-chevron-left pull-left"></i></td><td style="vertical-align: middle;"><img width="24" height="24" src="img/electric_power.png"></td><td class="feature-name">' + name + '</td></tr>';
 }
@@ -290,7 +291,8 @@ $(document).one("ajaxStop", function() {
   //map.fitBounds(stations.getBounds());
 
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"
