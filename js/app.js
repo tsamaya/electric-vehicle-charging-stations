@@ -24,7 +24,7 @@ function onMapClick(evt) {
     bufferedLayer.clearLayers().addLayer(circle);
     highlight.clearLayers();
     map.fitBounds(circle.getBounds());
-    // within a rectangle :
+    // within a square :
     //var ptsWithin = [];
     // stations.eachLayer(function(layer) {
     //   if (circle.getBounds().contains(layer.getLatLng())) {
@@ -95,7 +95,8 @@ function syncSidebar() {
   });
   /* Update list.js featureList */
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"
@@ -290,7 +291,8 @@ $(document).one("ajaxStop", function() {
   //map.fitBounds(stations.getBounds());
 
   featureList = new List("features", {
-    valueNames: ["feature-name"]
+    valueNames: ["feature-name"],
+    plugins: [ListFuzzySearch()]
   });
   featureList.sort("feature-name", {
     order: "asc"
